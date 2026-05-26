@@ -8,6 +8,7 @@ yay -S nordic-theme nordzy-icon-theme nordzy-cursors-theme librewolf-bin
 echo ""
 echo "Applying Default Themes & Configs..."
 cp -R .config ~/
+cp .xinitrc ~/
 echo ""
 echo "-------------"
 echo "Requirements installed. You may now use the 'startx' command to start sigwm"
