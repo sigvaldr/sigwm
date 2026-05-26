@@ -1,4 +1,4 @@
-//! penrose :: "Built in" status-bar
+//! SIGWM :: "Built in" status-bar
 //!
 //! The `penrose_ui` crate contains some UI elements that make use of the penrose APIs
 //! to provide native integration with the rest of the library. This example shows how
@@ -28,7 +28,13 @@ use penrose::{
     map, stack,
 };
 
-use penrose_ui::{bar::Position, core::TextStyle, status_bar};
+use penrose_ui::{
+    bar::{Position, StatusBar},
+    core::TextStyle,
+};
+
+// Private items from bar::widgets that need direct import
+use penrose_ui::bar::widgets::{ActiveWindowName, CurrentLayout, Text, Workspaces};
 use std::collections::HashMap;
 use tracing_subscriber::{self, prelude::*};
 
@@ -37,8 +43,8 @@ const BLACK: u32 = 0x282828ff;
 const WHITE: u32 = 0xebdbb2ff;
 const GREY: u32 = 0x3c3836ff;
 const BLUE: u32 = 0x458588ff;
-const SIGBLUE: u32 = 0x0225255ff;
-
+//const SIGBLUE: u32 = 0x022525ff;
+const SIGBLUE: u32 = 0x00a6d7ff;
 const MAX_MAIN: u32 = 1;
 const RATIO: f32 = 0.6;
 const RATIO_STEP: f32 = 0.1;
@@ -117,14 +123,43 @@ fn main() -> Result<()> {
         padding: (2, 2),
     };
 
-    let bar = status_bar(BAR_HEIGHT_PX, FONT, 8, style, BLUE, GREY, Position::Top).unwrap();
+    // Build widgets for the status bar
+    let widgets: Vec<Box<dyn penrose_ui::bar::widgets::Widget<RustConn> + 'static>> = vec![
+        Box::new(Workspaces::new(style.clone(), BLUE, GREY)),
+        Box::new(CurrentLayout::new(style.clone())),
+        Box::new(ActiveWindowName::new(80, style.clone(), true, false)),
+        // Custom Text widget showing "SIGWM" instead of "penrose"
+        Box::new(Text::new("SIGWM", style, false, true)),
+    ];
 
-    let wm = bar.add_to(WindowManager::new(
-        config,
-        key_bindings,
-        HashMap::new(),
-        conn,
-    )?);
+    let bar = match StatusBar::try_new(
+        Position::Top,
+        BAR_HEIGHT_PX,
+        style.bg.unwrap_or_else(|| 0x000000.into()),
+        FONT,
+        8u8, // point_size
+        widgets,
+    ) {
+        Ok(bar) => bar,
+        Err(_) => {
+            return Err(penrose::Error::from(std::io::Error::new(
+                std::io::ErrorKind::Other,
+                "Failed to create status bar",
+            )));
+        }
+    };
+
+    let wm_manager = match WindowManager::new(config, key_bindings, HashMap::new(), conn) {
+        Ok(wm) => wm,
+        Err(_) => {
+            return Err(penrose::Error::from(std::io::Error::new(
+                std::io::ErrorKind::Other,
+                "Failed to create window manager",
+            )));
+        }
+    };
+
+    let wm = bar.add_to(wm_manager);
 
     wm.run()
 }
