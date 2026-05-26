@@ -8,6 +8,8 @@
 //! For more customisation options, see the `bar` module of the `penrose_ui` crate in
 //! the `/crates` directory.
 
+const VERSION: &str = env!("CARGO_PKG_VERSION");
+
 use penrose::x11rb::RustConn;
 use penrose::{
     Result,
@@ -129,7 +131,12 @@ fn main() -> Result<()> {
         Box::new(CurrentLayout::new(style.clone())),
         Box::new(ActiveWindowName::new(80, style.clone(), true, false)),
         // Custom Text widget showing "SIGWM" instead of "penrose"
-        Box::new(Text::new("SIGWM", style, false, true)),
+        Box::new(Text::new(
+            &format!("SIGWM v{}", VERSION),
+            style,
+            false,
+            true,
+        )),
     ];
 
     let bar = match StatusBar::try_new(
