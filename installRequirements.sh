@@ -17,7 +17,7 @@ cd yay
 makepkg -si
 clear
 echo "Installing PreReqs from AUR..."
-yay -S nordic-theme nordzy-icon-theme nordzy-cursors-theme librewolf-bin light fish
+yay -S nordic-theme nordzy-icon-theme nordzy-cursors-theme librewolf-bin light fish fastfetch
 clear
 echo "Switching to fish shell..."
 chsh -s /usr/bin/fish
