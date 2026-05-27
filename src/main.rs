@@ -1,4 +1,4 @@
-//! penrose :: "Built in" status-bar
+//! SIGWM :: "Built in" status-bar
 //!
 //! The `penrose_ui` crate contains some UI elements that make use of the penrose APIs
 //! to provide native integration with the rest of the library. This example shows how
@@ -7,6 +7,8 @@
 //!
 //! For more customisation options, see the `bar` module of the `penrose_ui` crate in
 //! the `/crates` directory.
+
+const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 use penrose::x11rb::RustConn;
 use penrose::{
@@ -28,17 +30,28 @@ use penrose::{
     map, stack,
 };
 
-use penrose_ui::{bar::Position, core::TextStyle, status_bar};
+use penrose_ui::{
+    bar::{Position, StatusBar},
+    core::TextStyle,
+};
+
+// Private items from bar::widgets that need direct import
+use penrose_ui::bar::widgets::{ActiveWindowName, CurrentLayout, Text, Workspaces};
 use std::collections::HashMap;
 use tracing_subscriber::{self, prelude::*};
 
+// DEFAULT PROGS
+const TERMINAL: &str = "alacritty";
+const LAUNCHER: &str = "rofi -show drun";
+const BROWSER: &str = "librewolf";
+const EXPLORER: &str = "thunar";
+
+// STYLE
 const FONT: &str = "BigBlueTermPlus Nerd Font Mono";
 const BLACK: u32 = 0x282828ff;
 const WHITE: u32 = 0xebdbb2ff;
 const GREY: u32 = 0x3c3836ff;
-const BLUE: u32 = 0x458588ff;
-const SIGBLUE: u32 = 0x0225255ff;
-
+const SIGBLUE: u32 = 0x00a6d7ff;
 const MAX_MAIN: u32 = 1;
 const RATIO: f32 = 0.6;
 const RATIO_STEP: f32 = 0.1;
@@ -64,9 +77,11 @@ fn raw_key_bindings() -> HashMap<String, Box<dyn KeyEventHandler<RustConn>>> {
         "M-Down" => send_layout_message(|| IncMain(-1)),
         "M-Right" => send_layout_message(|| ExpandMain),
         "M-Left" => send_layout_message(|| ShrinkMain),
-        "M-semicolon" => spawn("dmenu_run"),
         "M-S-s" => log_current_state(),
-        "M-Return" => spawn("alacritty"),
+        "M-Return" => spawn(TERMINAL),
+        "M-space" => spawn(LAUNCHER),
+        "M-f" => spawn(EXPLORER),
+        "M-w" => spawn(BROWSER),
         "M-C" => modify_with(|cs| cs.kill_focused()),
         "M-Escape" => exit(),
     };
@@ -117,14 +132,51 @@ fn main() -> Result<()> {
         padding: (2, 2),
     };
 
-    let bar = status_bar(BAR_HEIGHT_PX, FONT, 8, style, BLUE, GREY, Position::Top).unwrap();
+    // Build widgets for the status bar
+    let widgets: Vec<Box<dyn penrose_ui::bar::widgets::Widget<RustConn> + 'static>> = vec![
+        Box::new(Workspaces::new(style.clone(), SIGBLUE, GREY)),
+        Box::new(CurrentLayout::new(style.clone())),
+        Box::new(ActiveWindowName::new(80, style.clone(), true, false)),
+        Box::new(Text::new(
+            &format!("SIGWM v{}", VERSION),
+            TextStyle {
+                fg: WHITE.into(),
+                bg: Some(SIGBLUE.into()),
+                padding: (2, 2),
+            },
+            false,
+            true,
+        )),
+    ];
 
-    let wm = bar.add_to(WindowManager::new(
-        config,
-        key_bindings,
-        HashMap::new(),
-        conn,
-    )?);
+    let bar = match StatusBar::try_new(
+        Position::Top,
+        BAR_HEIGHT_PX,
+        style.bg.unwrap_or_else(|| 0x000000.into()),
+        FONT,
+        12u8, // point_size
+        widgets,
+    ) {
+        Ok(bar) => bar,
+        Err(_) => {
+            return Err(penrose::Error::from(std::io::Error::new(
+                std::io::ErrorKind::Other,
+                "Failed to create status bar",
+            )));
+        }
+    };
+
+    let wm_manager = match WindowManager::new(config, key_bindings, HashMap::new(), conn) {
+        Ok(wm) => wm,
+        Err(_) => {
+            return Err(penrose::Error::from(std::io::Error::new(
+                std::io::ErrorKind::Other,
+                "Failed to create window manager",
+            )));
+        }
+    };
+
+    let wm = bar.add_to(wm_manager);
 
     wm.run()
 }
