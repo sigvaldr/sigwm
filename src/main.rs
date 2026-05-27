@@ -152,7 +152,7 @@ fn main() -> Result<()> {
         BAR_HEIGHT_PX,
         style.bg.unwrap_or_else(|| 0x000000.into()),
         FONT,
-        8u8, // point_size
+        12u8, // point_size
         widgets,
     ) {
         Ok(bar) => bar,
