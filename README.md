@@ -1,8 +1,7 @@
 # SIGWM – Lightweight Rust Window Manager
 
+[![Built on Penrose](https://img.shields.io/badge/%E2%99%A5-Built%20on%20Penrose-8b5cf6?style=for-the-badge)](https://github.com/sonohzr/penrose)
 [![Version](https://img.shields.io/badge/version-0.1.1-blue.svg)](./Cargo.toml)
-[![License](https://img.shields.io/badge/license-Unspecified-gray.svg)](./Cargo.toml)
-[![Repository](https://img.shields.io/badge/repo-GitHub-blue.svg)](https://github.com/sigvaldr/sigwm)
 
 ---
 
