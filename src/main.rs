@@ -51,7 +51,6 @@ const FONT: &str = "BigBlueTermPlus Nerd Font Mono";
 const BLACK: u32 = 0x282828ff;
 const WHITE: u32 = 0xebdbb2ff;
 const GREY: u32 = 0x3c3836ff;
-const BLUE: u32 = 0x458588ff;
 const SIGBLUE: u32 = 0x00a6d7ff;
 const MAX_MAIN: u32 = 1;
 const RATIO: f32 = 0.6;
@@ -135,13 +134,16 @@ fn main() -> Result<()> {
 
     // Build widgets for the status bar
     let widgets: Vec<Box<dyn penrose_ui::bar::widgets::Widget<RustConn> + 'static>> = vec![
-        Box::new(Workspaces::new(style.clone(), BLUE, GREY)),
+        Box::new(Workspaces::new(style.clone(), SIGBLUE, GREY)),
         Box::new(CurrentLayout::new(style.clone())),
         Box::new(ActiveWindowName::new(80, style.clone(), true, false)),
-        // Custom Text widget showing "SIGWM" instead of "penrose"
         Box::new(Text::new(
             &format!("SIGWM v{}", VERSION),
-            style,
+            TextStyle {
+                fg: WHITE.into(),
+                bg: Some(SIGBLUE.into()),
+                padding: (2, 2),
+            },
             false,
             true,
         )),
