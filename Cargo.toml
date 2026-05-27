@@ -1,6 +1,6 @@
 [package]
 name = "sigwm"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
 authors = ["Sigvaldr Nótthrafn - me@sigvaldr.lol"]
 repository = "https://github.com/sigvaldr/sigwm"

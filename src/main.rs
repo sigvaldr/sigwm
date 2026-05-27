@@ -40,12 +40,18 @@ use penrose_ui::bar::widgets::{ActiveWindowName, CurrentLayout, Text, Workspaces
 use std::collections::HashMap;
 use tracing_subscriber::{self, prelude::*};
 
+// DEFAULT PROGS
+const TERMINAL: &str = "alacritty";
+const LAUNCHER: &str = "rofi -show drun";
+const BROWSER: &str = "librewolf";
+const EXPLORER: &str = "thunar";
+
+// STYLE
 const FONT: &str = "BigBlueTermPlus Nerd Font Mono";
 const BLACK: u32 = 0x282828ff;
 const WHITE: u32 = 0xebdbb2ff;
 const GREY: u32 = 0x3c3836ff;
 const BLUE: u32 = 0x458588ff;
-//const SIGBLUE: u32 = 0x022525ff;
 const SIGBLUE: u32 = 0x00a6d7ff;
 const MAX_MAIN: u32 = 1;
 const RATIO: f32 = 0.6;
@@ -72,9 +78,11 @@ fn raw_key_bindings() -> HashMap<String, Box<dyn KeyEventHandler<RustConn>>> {
         "M-Down" => send_layout_message(|| IncMain(-1)),
         "M-Right" => send_layout_message(|| ExpandMain),
         "M-Left" => send_layout_message(|| ShrinkMain),
-        "M-semicolon" => spawn("dmenu_run"),
         "M-S-s" => log_current_state(),
-        "M-Return" => spawn("alacritty"),
+        "M-Return" => spawn(TERMINAL),
+        "M-space" => spawn(LAUNCHER),
+        "M-f" => spawn(EXPLORER),
+        "M-w" => spawn(BROWSER),
         "M-C" => modify_with(|cs| cs.kill_focused()),
         "M-Escape" => exit(),
     };
