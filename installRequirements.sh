@@ -2,6 +2,7 @@
 
 echo "Installing Prereqs..."
 sudo pacman -S --needed xorg-xfd ttf-bigblueterminal-nerd alacritty starship rofi thunar eza
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 echo ""
 echo "Installing PreReqs from AUR..."
 yay -S nordic-theme nordzy-icon-theme nordzy-cursors-theme librewolf-bin
