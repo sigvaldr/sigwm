@@ -19,10 +19,6 @@ sudo pacman -S xorg-server xorg-xinit intel-media-driver libva-intel-driver mesa
 clear
 echo "Installing Prereqs..."
 sudo pacman -S --needed git base-devel xorg-xfd ttf-bigblueterminal-nerd alacritty starship rofi thunar eza vim
-clear
-echo "Applying Default Themes & Configs..."
-cp -R .config ~/
-cp .xinitrc ~/
 mkdir -p ~/.src
 clear
 echo "Installing YaY"
@@ -33,9 +29,6 @@ makepkg -si
 clear
 echo "Installing PreReqs from AUR..."
 yay -S nordic-theme nordzy-icon-theme nordzy-cursors librewolf-bin light fish fastfetch
-clear
-echo "Switching to fish shell..."
-chsh -s /usr/bin/fish
 clear
 echo "Intalling Rustup..."
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs >> ./rustup.sh
@@ -78,6 +71,13 @@ git clone https://github.com/sigvaldr/sigwm.git
 cd sigwm
 cargo build --release
 sudo cp target/release/sigwm /usr/bin
+echo "Applying Default Themes & Configs..."
+cp -R .config ~/
+cp .xinitrc ~/
+echo "Switching to fish shell..."
+echo "Please type /usr/bin/fish when asked for new shell"
+chsh
+echo ""
 echo "-----------------------------------"
 echo "Installation complete."
 echo "Please reboot into your new WM :)"
