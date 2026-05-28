@@ -32,7 +32,7 @@ echo "WHEN PROMPTED, PLEASE SELECT pipewire-jack"
 read -p "Do you understand and would like to continue? (Y/n): " -r answer
 answer=${answer:-Y}
 [[ "$answer" =~ ^[Yy]$ ]] || exit 1
-yay -S nordic-theme nordzy-icon-theme nordzy-cursors librewolf-bin light fish fastfetch
+yay -S nordic-theme nordzy-icon-theme nordzy-cursors librewolf-bin light fish fastfetch pavucontrol
 clear
 echo "Intalling Rustup..."
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs >> ./rustup.sh
