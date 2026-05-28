@@ -155,10 +155,10 @@ fn main() -> Result<()> {
     let widgets: Vec<Box<dyn penrose_ui::bar::widgets::Widget<RustConn> + 'static>> = vec![
         Box::new(Workspaces::new(style.clone(), SIGBLUE, GREY)),
         Box::new(CurrentLayout::new(style.clone())),
-        Box::new(clock),
-        Box::new(Text::new(" ", style.clone(), false, true)), // Left spacer for centering
-        Box::new(Text::new(" ", style.clone(), false, true)), // Right spacer for centering
         Box::new(ActiveWindowName::new(80, style.clone(), true, false)),
+        Box::new(Text::new(" ", style.clone(), false, true)), // Left spacer for centering
+        Box::new(clock),
+        Box::new(Text::new(" ", style.clone(), false, true)), // Right spacer for centering
         Box::new(Text::new(
             &format!("SIGWM v{}", VERSION),
             TextStyle {
