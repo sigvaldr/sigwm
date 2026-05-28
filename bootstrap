@@ -1,5 +1,4 @@
 #!/bin/bash
-sigPWD=$PWD
 clear
 echo "This bootstrap script assumes a minimal arch install and will handle all dependencies"
 echo "such as x11, video and audio drivers, default configs for apps, and install apps either"
@@ -71,7 +70,8 @@ sudo systemctl enable pipewire-pluse.service
 sudo systemctl enable wireplumber.service
 clear
 echo "Building SIGWM..."
-cd $sigPWD
+cd ~/.src
+git clone https://github.com/sigvaldr/sigwm.git
 cargo build --release
 sudo cp target/release/sigwm /usr/bin
 echo "-----------------------------------"
