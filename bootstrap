@@ -80,6 +80,8 @@ cp -R .config ~/
 cp .xinitrc ~/
 echo "Switching to fish shell..."
 echo "Please type /usr/bin/fish when asked for new shell"
+echo ""
+echo ""
 chsh
 echo ""
 echo "-----------------------------------"
