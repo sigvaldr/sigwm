@@ -84,6 +84,8 @@ fn raw_key_bindings() -> HashMap<String, Box<dyn KeyEventHandler<RustConn>>> {
         "M-w" => spawn(BROWSER),
         "M-C" => modify_with(|cs| cs.kill_focused()),
         "M-Escape" => exit(),
+        "XF86MonBrightnessUp" => spawn("light -A 10"),
+        "XF86MonBrightnessDown" => spawn("light -U 10"),
     };
 
     for tag in &["1", "2", "3", "4", "5", "6", "7", "8", "9"] {
