@@ -30,13 +30,15 @@ use penrose::{
     map, stack,
 };
 
+use penrose::util::spawn_for_output_with_args;
+
 use penrose_ui::{
     bar::{Position, StatusBar},
     core::TextStyle,
 };
 
 // Private items from bar::widgets that need direct import
-use penrose_ui::bar::widgets::{ActiveWindowName, CurrentLayout, Text, Workspaces};
+use penrose_ui::bar::widgets::{ActiveWindowName, CurrentLayout, RefreshText, Text, Workspaces};
 use std::collections::HashMap;
 use tracing_subscriber::{self, prelude::*};
 
@@ -135,9 +137,27 @@ fn main() -> Result<()> {
     };
 
     // Build widgets for the status bar
+    // Clock widget - centered with padding after layout indicator
+    let clock = RefreshText::new(
+        TextStyle {
+            fg: WHITE.into(),
+            bg: Some(BLACK.into()),
+            padding: (4, 2),
+        },
+        || {
+            spawn_for_output_with_args("date", &["+%F %T"])
+                .unwrap_or_default()
+                .trim()
+                .to_string()
+        },
+    );
+
     let widgets: Vec<Box<dyn penrose_ui::bar::widgets::Widget<RustConn> + 'static>> = vec![
         Box::new(Workspaces::new(style.clone(), SIGBLUE, GREY)),
         Box::new(CurrentLayout::new(style.clone())),
+        Box::new(clock),
+        Box::new(Text::new(" ", style.clone(), false, true)), // Left spacer for centering
+        Box::new(Text::new(" ", style.clone(), false, true)), // Right spacer for centering
         Box::new(ActiveWindowName::new(80, style.clone(), true, false)),
         Box::new(Text::new(
             &format!("SIGWM v{}", VERSION),
