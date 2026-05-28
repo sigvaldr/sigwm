@@ -38,9 +38,12 @@ echo "Switching to fish shell..."
 chsh -s /usr/bin/fish
 clear
 echo "Intalling Rustup..."
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs >> ./rustup.sh
+chmod +x ./rustup.sh
+source ./rustup.sh
 source ~/.bashrc
-. "$HOME/.cargo/env"
+export PATH="$HOME/.cargo/bin:$PATH"
+rm ./rustup.sh
 clear
 echo "Installing extras..."
 cd ~/.src
@@ -72,6 +75,7 @@ clear
 echo "Building SIGWM..."
 cd ~/.src
 git clone https://github.com/sigvaldr/sigwm.git
+cd sigwm
 cargo build --release
 sudo cp target/release/sigwm /usr/bin
 echo "-----------------------------------"
