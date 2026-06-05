@@ -26,7 +26,7 @@ use penrose::{
         bindings::{KeyEventHandler, parse_keybindings_with_xmodmap},
         layout::LayoutStack,
     },
-    extensions::hooks::add_ewmh_hooks,
+    extensions::hooks::{SpawnOnStartup, add_ewmh_hooks},
     map, stack,
 };
 
@@ -53,7 +53,7 @@ const FONT: &str = "BigBlueTermPlus Nerd Font Mono";
 const BLACK: u32 = 0x282828ff;
 const WHITE: u32 = 0xebdbb2ff;
 const GREY: u32 = 0x3c3836ff;
-const SIGBLUE: u32 = 0x00a6d7ff;
+const SIGBLUE: u32 = 0x038026ff;
 const MAX_MAIN: u32 = 1;
 const RATIO: f32 = 0.6;
 const RATIO_STEP: f32 = 0.1;
@@ -88,6 +88,8 @@ fn raw_key_bindings() -> HashMap<String, Box<dyn KeyEventHandler<RustConn>>> {
         "M-Escape" => exit(),
         "XF86MonBrightnessUp" => spawn("light -A 10"),
         "XF86MonBrightnessDown" => spawn("light -U 10"),
+        "M-m" => spawn("prismlauncher"),
+        "M-n" => spawn("nmgui"),
     };
 
     for tag in &["1", "2", "3", "4", "5", "6", "7", "8", "9"] {
@@ -122,9 +124,11 @@ fn main() -> Result<()> {
         .finish()
         .init();
 
+    let startup_hook = SpawnOnStartup::boxed("autostart");
     let config = add_ewmh_hooks(Config {
         default_layouts: layouts(),
         focused_border: SIGBLUE.into(),
+        startup_hook: Some(startup_hook),
         ..Config::default()
     });
 
@@ -160,7 +164,7 @@ fn main() -> Result<()> {
         Box::new(clock),
         Box::new(Text::new(" ", style.clone(), false, true)), // Right spacer for centering
         Box::new(Text::new(
-            &format!("SIGWM v{}", VERSION),
+            &format!("MINEBOX"),
             TextStyle {
                 fg: WHITE.into(),
                 bg: Some(SIGBLUE.into()),
